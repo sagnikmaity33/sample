@@ -13,12 +13,12 @@ const Login: NextPage = () => {
     const checkAuth = async () => {
       try {
         if (bypassAuth) {
-          router.replace('/');
+          void router.replace('/');
           return;
         }
         const response = await fetch('/api/auth/me');
         if (response.ok) {
-          router.push('/');
+          void router.push('/');
         }
       } catch (error) {
         // User not authenticated, stay on login page
@@ -27,8 +27,12 @@ const Login: NextPage = () => {
       }
     };
 
-    checkAuth();
+    void checkAuth();
   }, [router, bypassAuth]);
+
+  const handleLogin = () => {
+    window.location.href = '/api/auth/login';
+  };
 
   if (isLoading) {
     return (
@@ -66,15 +70,15 @@ const Login: NextPage = () => {
           </div>
           
           <div className="space-y-4">
-            <a
-              href="/api/auth/login"
+            <button
+              onClick={handleLogin}
               className="w-full flex justify-center items-center px-4 py-3 text-white bg-green-600 border border-transparent rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors font-medium"
             >
               <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
               Continue with Auth0
-            </a>
+            </button>
             
             <div className="text-center pt-4">
               <p className="text-sm text-gray-500">

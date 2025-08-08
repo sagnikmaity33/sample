@@ -91,7 +91,7 @@ const Home: NextPage = () => {
                     </svg>
                   </div>
                   <h3 className="text-lg font-medium text-gray-900 mb-2">How can I help you today?</h3>
-                  <p className="text-gray-500">I'm ready to assist you with any questions or tasks.</p>
+                  <p className="text-gray-500">I&apos;m ready to assist you with any questions or tasks.</p>
                 </div>
               </div>
             ) : (

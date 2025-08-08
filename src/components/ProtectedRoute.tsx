@@ -16,28 +16,29 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const bypassAuth = process.env.NEXT_PUBLIC_BYPASS_AUTH !== 'false';
 
   useEffect(() => {
-    if (bypassAuth) {
-      setIsAuthenticated(true);
-      setIsLoading(false);
-      return;
-    }
+    const checkAuth = async (): Promise<void> => {
+      if (bypassAuth) {
+        setIsAuthenticated(true);
+        setIsLoading(false);
+        return;
+      }
 
-    const checkAuth = async () => {
       try {
         const response = await fetch('/api/auth/me');
         if (response.ok) {
           setIsAuthenticated(true);
         } else {
-          router.push('/login');
+          await router.push('/login');
         }
       } catch (error) {
-        router.push('/login');
+        await router.push('/login');
       } finally {
         setIsLoading(false);
       }
     };
 
-    checkAuth();
+    // Run and explicitly ignore returned promise from `useEffect`
+    void checkAuth();
   }, [router, bypassAuth]);
 
   if (isLoading) {
@@ -63,4 +64,4 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   return <>{children}</>;
-} 
+}

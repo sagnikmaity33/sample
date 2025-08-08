@@ -3,33 +3,39 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+interface User {
+  name?: string;
+  email?: string;
+}
+
 export default function AuthButton() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Default bypass unless explicitly disabled
   const bypassAuth = process.env.NEXT_PUBLIC_BYPASS_AUTH !== 'false';
 
   useEffect(() => {
-    const checkUser = async () => {
+    const checkUser = async (): Promise<void> => {
       try {
         if (bypassAuth) {
           setUser({ name: 'Test User' });
           return;
         }
+
         const response = await fetch('/api/auth/me');
         if (response.ok) {
-          const data = await response.json();
+          const data: { user: User } = await response.json();
           setUser(data.user);
         }
-      } catch (error) {
-        // User not authenticated
+      } catch {
+        // User not authenticated, do nothing
       } finally {
         setIsLoading(false);
       }
     };
 
-    checkUser();
+    void checkUser();
   }, [bypassAuth]);
 
   if (isLoading) {
@@ -46,8 +52,18 @@ export default function AuthButton() {
       <div className="flex items-center space-x-3">
         <div className="flex items-center space-x-2">
           <div className="h-6 w-6 rounded-full bg-gray-300 flex items-center justify-center">
-            <svg className="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            <svg
+              className="h-4 w-4 text-gray-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
             </svg>
           </div>
           <span className="text-sm font-medium text-gray-700">
@@ -55,7 +71,9 @@ export default function AuthButton() {
           </span>
         </div>
         {bypassAuth ? (
-          <span className="rounded-md px-3 py-2 text-xs font-medium text-gray-500 bg-gray-100">Bypass</span>
+          <span className="rounded-md px-3 py-2 text-xs font-medium text-gray-500 bg-gray-100">
+            Bypass
+          </span>
         ) : (
           <Link
             href="/api/auth/logout"
@@ -76,4 +94,4 @@ export default function AuthButton() {
       Sign in
     </Link>
   );
-} 
+}

@@ -1,28 +1,22 @@
-import { getSession } from '@auth0/nextjs-auth0';
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
+// import { isAuthenticated } from '../../lib/auth0'; // Kept inactive
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const bypassAuth = process.env.NEXT_PUBLIC_BYPASS_AUTH !== 'false';
-
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> {
   try {
-    if (bypassAuth) {
-      return res.status(200).json({ user: { name: 'Test User', email: 'test@example.com' } });
-    }
+    // If you want to re-enable Auth0 later:
+    // const authenticated = await isAuthenticated(req, res);
+    // if (!authenticated) {
+    //   res.status(401).json({ error: 'Unauthorized' });
+    //   return;
+    // }
 
-    const session = await getSession(req, res);
-    
-    if (session?.user) {
-      return res.status(200).json({ user: session.user });
-    } else {
-      return res.status(401).json({ error: 'Not authenticated' });
-    }
+    // Example static response for now
+    res.status(200).json({ message: 'User data will go here once Auth0 is enabled.' });
   } catch (error) {
-    return res.status(401).json({ error: 'Not authenticated' });
+    console.error('Error in /api/me:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 }
-
-
