@@ -8,6 +8,10 @@ interface User {
   email?: string;
 }
 
+interface ApiResponse {
+  user: User;
+}
+
 export default function AuthButton() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,7 +29,7 @@ export default function AuthButton() {
 
         const response = await fetch('/api/auth/me');
         if (response.ok) {
-          const data: { user: User } = await response.json();
+          const data = await response.json() as ApiResponse;
           setUser(data.user);
         }
       } catch {
